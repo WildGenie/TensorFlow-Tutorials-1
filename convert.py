@@ -96,7 +96,7 @@ def video2images(in_dir, out_dir, crop_size, out_size, framerate, video_exts):
                 file_root, file_ext = os.path.splitext(file_name)
 
                 # Create the template file-name for the output images.
-                new_file_name = file_root + "-%4d.jpg"
+                new_file_name = f"{file_root}-%4d.jpg"
 
                 # Complete file-path for the output images incl. all sub-dirs.
                 new_file_path = os.path.join(new_dir, new_file_name)
@@ -171,18 +171,11 @@ if __name__ == "__main__":
     framerate = args.rate
     video_exts = args.exts
 
-    if video_exts is None:
-        # Default extensions for video-files.
-        video_exts = (".MTS", ".mp4")
-    else:
-        # A list of strings is provided as a command-line argument, but we
-        # need a tuple instead of a list, so convert it to a tuple.
-        video_exts = tuple(video_exts)
-
+    video_exts = (".MTS", ".mp4") if video_exts is None else tuple(video_exts)
     # Print the arguments.
     print("Convert videos to images.")
-    print("- Input dir: " + in_dir)
-    print("- Output dir: " + out_dir)
+    print(f"- Input dir: {in_dir}")
+    print(f"- Output dir: {out_dir}")
     print("- Crop width and height: {0}".format(crop_size))
     print("- Resize width and height: {0}".format(out_size))
     print("- Frame-rate: {0}".format(framerate))

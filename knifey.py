@@ -51,7 +51,7 @@ num_channels = 3
 img_shape = [img_size, img_size, num_channels]
 
 # Length of an image when flattened to a 1-dim array.
-img_size_flat = img_size * img_size * num_channels
+img_size_flat = img_size**2 * num_channels
 
 # Number of classes.
 num_classes = 3
@@ -88,13 +88,7 @@ def load():
     # Path for the cache-file.
     cache_path = os.path.join(data_dir, "knifey-spoony.pkl")
 
-    # If the DataSet-object already exists in a cache-file
-    # then load it, otherwise create a new object and save
-    # it to the cache-file so it can be loaded the next time.
-    dataset = load_cached(cache_path=cache_path,
-                          in_dir=data_dir)
-
-    return dataset
+    return load_cached(cache_path=cache_path, in_dir=data_dir)
 
 
 def copy_files():
@@ -138,25 +132,25 @@ if __name__ == '__main__':
     # Check if the training-set looks OK.
 
     # Print some of the file-paths for the training-set.
-    for path in image_paths_train[0:5]:
+    for path in image_paths_train[:5]:
         print(path)
 
     # Print the associated class-numbers.
-    print(cls_train[0:5])
+    print(cls_train[:5])
 
     # Print the class-numbers as one-hot encoded arrays.
-    print(labels_train[0:5])
+    print(labels_train[:5])
 
     # Check if the test-set looks OK.
 
     # Print some of the file-paths for the test-set.
-    for path in image_paths_test[0:5]:
+    for path in image_paths_test[:5]:
         print(path)
 
     # Print the associated class-numbers.
-    print(cls_test[0:5])
+    print(cls_test[:5])
 
     # Print the class-numbers as one-hot encoded arrays.
-    print(labels_test[0:5])
+    print(labels_test[:5])
 
 ########################################################################

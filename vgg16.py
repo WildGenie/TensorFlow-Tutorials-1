@@ -121,7 +121,10 @@ class VGG16:
             self.input = self.graph.get_tensor_by_name(self.tensor_name_input_image)
 
             # Get references to the tensors for the commonly used layers.
-            self.layer_tensors = [self.graph.get_tensor_by_name(name + ":0") for name in self.layer_names]
+            self.layer_tensors = [
+                self.graph.get_tensor_by_name(f"{name}:0")
+                for name in self.layer_names
+            ]
 
     def get_layer_tensors(self, layer_ids):
         """
@@ -170,21 +173,6 @@ class VGG16:
         # VGG16 model was built to take multiple images as input.
         image = np.expand_dims(image, axis=0)
 
-        if False:
-            # In the original code using this VGG16 model, the random values
-            # for the dropout are fixed to 1.0.
-            # Experiments suggest that it does not seem to matter for
-            # Style Transfer, and this causes an error with a GPU.
-            dropout_fix = 1.0
-
-            # Create feed-dict for inputting data to TensorFlow.
-            feed_dict = {self.tensor_name_input_image: image,
-                         self.tensor_name_dropout: [[dropout_fix]],
-                         self.tensor_name_dropout1: [[dropout_fix]]}
-        else:
-            # Create feed-dict for inputting data to TensorFlow.
-            feed_dict = {self.tensor_name_input_image: image}
-
-        return feed_dict
+        return {self.tensor_name_input_image: image}
 
 ########################################################################

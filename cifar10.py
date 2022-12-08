@@ -58,7 +58,7 @@ img_size = 32
 num_channels = 3
 
 # Length of an image when flattened to a 1-dim array.
-img_size_flat = img_size * img_size * num_channels
+img_size_flat = img_size**2 * num_channels
 
 # Number of classes.
 num_classes = 10
@@ -100,7 +100,7 @@ def _unpickle(filename):
     # Create full path for the file.
     file_path = _get_file_path(filename)
 
-    print("Loading data: " + file_path)
+    print(f"Loading data: {file_path}")
 
     with open(file_path, mode='rb') as file:
         # In Python 3.X it is important to set the encoding,
@@ -176,10 +176,7 @@ def load_class_names():
     # Load the class-names from the pickled file.
     raw = _unpickle(filename="batches.meta")[b'label_names']
 
-    # Convert from binary strings.
-    names = [x.decode('utf-8') for x in raw]
-
-    return names
+    return [x.decode('utf-8') for x in raw]
 
 
 def load_training_data():
@@ -201,7 +198,7 @@ def load_training_data():
     # For each data-file.
     for i in range(_num_files_train):
         # Load the images and class-numbers from the data-file.
-        images_batch, cls_batch = _load_data(filename="data_batch_" + str(i + 1))
+        images_batch, cls_batch = _load_data(filename=f"data_batch_{str(i + 1)}")
 
         # Number of images in this batch.
         num_images = len(images_batch)
