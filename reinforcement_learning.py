@@ -432,10 +432,7 @@ def _rgb_to_grayscale(image):
     # Get the separate colour-channels.
     r, g, b = image[:, :, 0], image[:, :, 1], image[:, :, 2]
 
-    # Convert to gray-scale using the Wikipedia formula.
-    img_gray = 0.2990 * r + 0.5870 * g + 0.1140 * b
-
-    return img_gray
+    return 0.2990 * r + 0.5870 * g + 0.1140 * b
 
 
 def _pre_process_image(image):
@@ -747,7 +744,7 @@ class ReplayMemory:
         # Get the errors between the Q-values that were estimated using
         # the Neural Network, and the Q-values that were updated with the
         # reward that was actually observed when an action was taken.
-        err = self.estimation_errors[0:self.num_used]
+        err = self.estimation_errors[:self.num_used]
 
         # Create an index of the estimation errors that are low.
         idx = err<self.error_threshold
@@ -967,12 +964,11 @@ class LinearControlSignal:
         if self.repeat:
             iteration %= self.num_iterations
 
-        if iteration < self.num_iterations:
-            value = iteration * self._coefficient + self.start_value
-        else:
-            value = self.end_value
-
-        return value
+        return (
+            iteration * self._coefficient + self.start_value
+            if iteration < self.num_iterations
+            else self.end_value
+        )
 
 ########################################################################
 
@@ -1038,12 +1034,11 @@ class EpsilonGreedy:
         otherwise epsilon is a fixed number.
         """
 
-        if training:
-            epsilon = self.epsilon_linear.get_value(iteration=iteration)
-        else:
-            epsilon = self.epsilon_testing
-
-        return epsilon
+        return (
+            self.epsilon_linear.get_value(iteration=iteration)
+            if training
+            else self.epsilon_testing
+        )
 
     def get_action(self, q_values, iteration, training):
         """
@@ -1313,10 +1308,7 @@ class NeuralNetwork:
         # Create a feed-dict for inputting the states to the Neural Network.
         feed_dict = {self.x: states}
 
-        # Use TensorFlow to calculate the estimated Q-values for these states.
-        values = self.session.run(self.q_values, feed_dict=feed_dict)
-
-        return values
+        return self.session.run(self.q_values, feed_dict=feed_dict)
 
     def optimize(self, min_epochs=1.0, max_epochs=10,
                  batch_size=128, loss_limit=0.015,
@@ -1435,9 +1427,7 @@ class NeuralNetwork:
     def get_variable_value(self, variable):
         """Return the value of a variable inside the TensorFlow graph."""
 
-        weights = self.session.run(variable)
-
-        return weights
+        return self.session.run(variable)
 
     def get_layer_tensor(self, layer_name):
         """
@@ -1450,12 +1440,9 @@ class NeuralNetwork:
 
         # The name of the last operation of a layer,
         # assuming it uses Relu as the activation-function.
-        tensor_name = layer_name + "/Relu:0"
+        tensor_name = f"{layer_name}/Relu:0"
 
-        # Get the tensor with this name.
-        tensor = tf.get_default_graph().get_tensor_by_name(tensor_name)
-
-        return tensor
+        return tf.get_default_graph().get_tensor_by_name(tensor_name)
 
     def get_tensor_value(self, tensor, state):
         """Get the value of a tensor in the Neural Network."""
@@ -1463,10 +1450,7 @@ class NeuralNetwork:
         # Create a feed-dict for inputting the state to the Neural Network.
         feed_dict = {self.x: [state]}
 
-        # Run the TensorFlow session to calculate the value of the tensor.
-        output = self.session.run(tensor, feed_dict=feed_dict)
-
-        return output
+        return self.session.run(tensor, feed_dict=feed_dict)
 
     def get_count_states(self):
         """

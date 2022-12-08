@@ -57,7 +57,7 @@ def cache(cache_path, fn, *args, **kwargs):
         with open(cache_path, mode='rb') as file:
             obj = pickle.load(file)
 
-        print("- Data loaded from cache-file: " + cache_path)
+        print(f"- Data loaded from cache-file: {cache_path}")
     else:
         # The cache-file does not exist.
 
@@ -68,7 +68,7 @@ def cache(cache_path, fn, *args, **kwargs):
         with open(cache_path, mode='wb') as file:
             pickle.dump(obj, file)
 
-        print("- Data saved to cache-file: " + cache_path)
+        print(f"- Data saved to cache-file: {cache_path}")
 
     return obj
 

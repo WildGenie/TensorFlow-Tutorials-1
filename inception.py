@@ -211,10 +211,7 @@ class NameLookup:
         # Lookup the uid from the cls.
         uid = self._cls_to_uid[cls]
 
-        # Lookup the name from the uid.
-        name = self.uid_to_name(uid=uid, only_first_name=only_first_name)
-
-        return name
+        return self.uid_to_name(uid=uid, only_first_name=only_first_name)
 
 
 ########################################################################
@@ -520,11 +517,7 @@ def process_images(fn, images=None, image_paths=None):
     using_images = images is not None
 
     # Number of images.
-    if using_images:
-        num_images = len(images)
-    else:
-        num_images = len(image_paths)
-
+    num_images = len(images) if using_images else len(image_paths)
     # Pre-allocate list for the results.
     # This holds references to other arrays. Initially the references are None.
     result = [None] * num_images

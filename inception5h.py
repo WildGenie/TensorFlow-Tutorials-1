@@ -112,7 +112,10 @@ class Inception5h:
             self.input = self.graph.get_tensor_by_name(self.tensor_name_input_image)
 
             # Get references to the tensors for the commonly used layers.
-            self.layer_tensors = [self.graph.get_tensor_by_name(name + ":0") for name in self.layer_names]
+            self.layer_tensors = [
+                self.graph.get_tensor_by_name(f"{name}:0")
+                for name in self.layer_names
+            ]
 
     def create_feed_dict(self, image=None):
         """
@@ -131,10 +134,7 @@ class Inception5h:
         # Inception model was built to take multiple images as input.
         image = np.expand_dims(image, axis=0)
 
-        # Image is passed in as a 3-dim array of raw pixel-values.
-        feed_dict = {self.tensor_name_input_image: image}
-
-        return feed_dict
+        return {self.tensor_name_input_image: image}
 
     def get_gradient(self, tensor):
         """

@@ -64,13 +64,7 @@ def _load_records(train=True):
     for either the training-set or the validation-set.
     """
 
-    if train:
-        # Training-set.
-        filename = "captions_train2017.json"
-    else:
-        # Validation-set.
-        filename = "captions_val2017.json"
-
+    filename = "captions_train2017.json" if train else "captions_val2017.json"
     # Full path for the data-file.
     path = os.path.join(data_dir, "annotations", filename)
 
@@ -84,7 +78,7 @@ def _load_records(train=True):
 
     # Initialize the dict for holding our data.
     # The lookup-key is the image-id.
-    records = dict()
+    records = {}
 
     # Collect all the filenames for the images.
     for image in images:
@@ -93,14 +87,7 @@ def _load_records(train=True):
         filename = image['file_name']
 
         # Initialize a new data-record.
-        record = dict()
-
-        # Set the image-filename in the data-record.
-        record['filename'] = filename
-
-        # Initialize an empty list of image-captions
-        # which will be filled further below.
-        record['captions'] = list()
+        record = {'filename': filename, 'captions': []}
 
         # Save the record using the the image-id as the lookup-key.
         records[image_id] = record
@@ -163,7 +150,7 @@ def maybe_download_and_extract():
         # Create the full URL for the given file.
         url = data_url + filename
 
-        print("Downloading " + url)
+        print(f"Downloading {url}")
 
         download.maybe_download_and_extract(url=url, download_dir=data_dir)
 
@@ -183,23 +170,10 @@ def load_records(train=True):
         ids, filenames, captions for the images in the data-set.
     """
 
-    if train:
-        # Cache-file for the training-set data.
-        cache_filename = "records_train.pkl"
-    else:
-        # Cache-file for the validation-set data.
-        cache_filename = "records_val.pkl"
-
+    cache_filename = "records_train.pkl" if train else "records_val.pkl"
     # Path for the cache-file.
     cache_path = os.path.join(data_dir, cache_filename)
 
-    # If the data-records already exist in a cache-file then load it,
-    # otherwise call the _load_records() function and save its
-    # return-values to the cache-file so it can be loaded the next time.
-    records = cache(cache_path=cache_path,
-                    fn=_load_records,
-                    train=train)
-
-    return records
+    return cache(cache_path=cache_path, fn=_load_records, train=train)
 
 ########################################################################

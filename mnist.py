@@ -94,9 +94,9 @@ class MNIST:
         # Split the training-set into train / validation.
         # Pixel-values are converted from ints between 0 and 255
         # to floats between 0.0 and 1.0.
-        self.x_train = x_train[0:self.num_train] / 255.0
+        self.x_train = x_train[:self.num_train] / 255.0
         self.x_val = x_train[self.num_train:] / 255.0
-        self.y_train_cls = y_train_cls[0:self.num_train]
+        self.y_train_cls = y_train_cls[:self.num_train]
         self.y_val_cls = y_train_cls[self.num_train:]
 
         # Download / load the test-set.
@@ -149,10 +149,7 @@ class MNIST:
         # Read the data as one long array of bytes.
         data = self._load_data(filename=filename, offset=16)
 
-        # Reshape to 2-dim array with shape (num_images, img_size_flat).
-        images_flat = data.reshape(-1, self.img_size_flat)
-
-        return images_flat
+        return data.reshape(-1, self.img_size_flat)
 
     def _load_cls(self, filename):
         """
